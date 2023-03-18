@@ -7,23 +7,61 @@ import threading
 """#use: pip install requests to run code."""
 import requests
 
-def findSubdomains(cleanUrl: str):
-    # print("group1: "+cleanUrl.group(1))
-    # print("group2: "+cleanUrl.group(2))
+def replace():
     with open('subdomains_output.bat', 'w') as subdomains_output:
         with open('filesinuse/subdomains_dictionary.bat','r') as potential_subs:
             for link in potential_subs:
                 link = link.rstrip()
                 parseLink = cleanUrl.group(1)+"www."+link+"."+cleanUrl.group(2)
-                r = requests.get(parseLink)
-                if r.getcode()<200 or r.getcode()>=300:
-                    print ("Website Error: ", url, r)
-                else:
-                    print ("Website Passed: ", url, r)
-                # if (r.status_code >= 200 and r.status_code <=299):
-                    # print("Valid Subdomain: "+parseLink)
-                subdomains_output.write(parseLink+"\n")
-            
+                try:
+                    r = requests.get(parseLink,timeout=3)
+
+                    if (r.status_code):
+                        print("Valid Subdomain: "+parseLink)
+                        subdomains_output.write(parseLink+"\n")   
+                except requests.HTTPError as error:
+                    time.sleep(0)
+                    #Do nothing
+                    print(f"HTTP Exception occured: {error} of code: "+r.status_code)
+                except Exception as error:
+                    time.sleep(0)
+                    #Do nothing
+                    # print(f"Some other exception occured: {error}")
+
+def replace2():
+        pots = ['https://www.google.com','https://www.images.google.com']
+        with open('subdomains_output.bat', 'w') as subdomains_output:
+            for link in pots:
+                try:
+                    r = requests.get(link,timeout=3)
+                    if(r.status_code):
+                        print("Valid Subdomain: "+link)
+                        subdomains_output.write(link)
+                except requests.HTTPError as error:
+                    print(f"HTTP Exception occured: {error} of code: "+r.status_code)
+                except Exception as error:
+                    print(f"Some other exception occured: {error}")
+
+def findDirs(cleanUrl: str):
+    group1 = cleanUrl.group(1)
+    group2 = cleanUrl.group(2)
+    link = group1+group2
+    print("Main link: "+link)
+    num_valid = 0
+    with open('subdomains_output.bat', 'w') as subdomains_output:
+        with open('filesinuse/dirs_dictionary.bat','r') as potential_dirs:
+            for directory in potential_dirs:
+                directory = directory.rstrip()
+                print(directory)
+                fullURL = link+'/'+directory
+                print(fullURL)
+                r = requests.get(fullURL)
+                if(r.status_code >= 200 and r.status_code <300):
+                    subdomains_output.write(fullURL+"\n")
+                    num_valid+=1
+                print(r.status_code)
+    print(num_valid)
+
 def main():
     """#Check the arguments entered by the user"""
     if len(sys.argv) < 2:
@@ -45,7 +83,7 @@ def main():
     """#https://ctflearn.com"""
     # print(cleanUrl.group(2))
     """Expected Output: ctflearn.com"""
-    findSubdomains(cleanUrl)
+    findDirs(cleanUrl)
 
     time.sleep(1)
 
