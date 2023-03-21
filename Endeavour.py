@@ -93,30 +93,44 @@ def findSubDomains(cleanUrl: str):
                 except NewConnectionError as e:
                     print('Could not connect to server:', e)
     print(success)
+    
+def getFiles(cleanUrl: str):
+    http=cleanUrl.group(0)
+    link=cleanUrl.group(1)
+
+    regex = r"<(?:a|link|img|video|audio) href=\"(.+?)\">"
+
+    r = requests.get(http+link)
+    source = r.text
+    lst = re.findall(regex,source)
+    with open('files_output.bat',w) as file_output:
+        for link in lst:
+            file_output.write(link+"\n")
 
 def main():
     """#Check the arguments entered by the user"""
-    # if len(sys.argv) < 2:
-    #     print("Enter a target website URL as an argument")
-    #     sys.exit()
-    #     exit(0)
-    # elif len(sys.argv) > 2:
-    #     print("Too many arguments, enter only 1 for the target website URL")
-    #     sys.exit()
-    #     exit(0)
-    # else:
-    #     """#Store argument if valid"""
-    #     print("Argument Passed!")
-    #     url = sys.argv[1]
-    url = "https://ctflearn.com"
+    if len(sys.argv) < 2:
+        print("Enter a target website URL as an argument")
+        sys.exit()
+        exit(0)
+    elif len(sys.argv) > 2:
+        print("Too many arguments, enter only 1 for the target website URL")
+        sys.exit()
+        exit(0)
+    else:
+        """#Store argument if valid"""
+        print("Argument Passed!")
+        url = sys.argv[1]
+#     url = "https://ctflearn.com"
     """#Clean the URL to try with subdomains"""
-    cleanUrlPattern = r"(https?://)([\w.-]+)"
+    cleanUrlPattern = r"(https?://)(?:www.)?([\w.-]+)"
     cleanUrl = re.match(cleanUrlPattern, url)
     """#https://ctflearn.com"""
     # print(cleanUrl.group(2))
     """Expected Output: ctflearn.com"""
-    # findDirs(cleanUrl)
+    findDirs(cleanUrl)
     findSubDomains(cleanUrl)
+    getFiles(cleanUrl)
 
     time.sleep(1)
 
