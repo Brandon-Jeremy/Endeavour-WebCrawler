@@ -49,7 +49,7 @@ def findDirs(cleanUrl: str):
     print("Main link: "+link)
     num_valid = 0
     with open('directories_output.bat', 'w') as directories_output:
-        with open('filesinuse/dirs_dictionary.bat','r') as potential_dirs:
+        with open('filesinuse/dirs_dictionary.txt','r') as potential_dirs:
             for directory in potential_dirs:
                 directory = directory.rstrip()
                 print(directory)
@@ -70,7 +70,7 @@ def findSubDomains(cleanUrl: str):
     link = cleanUrl.group(2)
     success = 0
     with open('subdomains_output.bat','w') as subdomains_output:
-        with open('filesinuse\subdomains_dictionary.bat','r') as domains:
+        with open('filesinuse\subdomains_dictionary.txt','r') as domains:
             for domain in domains:
                 domain = domain.rstrip()
                 fullURL = http+"www."+domain+"."+link
