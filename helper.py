@@ -11,9 +11,11 @@ def verifyLink(url:str):
     linkToUse = validURL.group(1)+validURL.group(2)
     try:
         isValid = requests.get(linkToUse)
-        return (isValid.status_code>=200 and isValid.status_code<300)
+        if (isValid.status_code>=200 and isValid.status_code<300):
+            return validURL
+        return None
     except requests.exceptions.RequestException as error:
-        return False
+        return None
     
 def chooseFunction(argNumber: int, cleanUrl: str):
     if (argNumber == 1):
@@ -24,7 +26,7 @@ def chooseFunction(argNumber: int, cleanUrl: str):
 
     elif(argNumber == 3):
         getFiles(cleanUrl)
-        
+
     else:
         findDirs(cleanUrl)
         findSubDomains(cleanUrl)
@@ -62,10 +64,10 @@ def findSubDomains(cleanUrl: str):
                 fullURL = http+"www."+domain+"."+link
                 print(f"Link: {fullURL}")
                 try:
-                    r = requests.get(httptest+domain+"."+linktest)
+                    r = requests.get(http+domain+"."+link)
                     r.raise_for_status()
                     if(r.status_code>=200 and r.status_code<300):
-                        subdomains_output.write(httptest+domain+"."+linktest+"\n")
+                        subdomains_output.write(http+domain+"."+link+"\n")
                         success+=1
                     print(r.status_code)
                 except requests.exceptions.RequestException as error:
@@ -76,8 +78,6 @@ def findSubDomains(cleanUrl: str):
                 except Exception as error:
                     #Do nothing
                     print(f"Some other exception occured: {error}")
-                except NewConnectionError as e:
-                    print('Could not connect to server:', e)
     print(success)
     
 def getFiles(cleanUrl: str):
@@ -92,3 +92,16 @@ def getFiles(cleanUrl: str):
     with open('output_files/files_output.txt','w') as file_output:
         for link in lst:
             file_output.write(link+"\n")
+
+def printAscii():
+    print(""" ██████████                █████                                                                                     
+░░███░░░░░█               ░░███                                                                                      
+ ░███  █ ░  ████████    ███████   ██████   ██████   █████ █████  ██████  █████ ████ ████████     ████████  █████ ████
+ ░██████   ░░███░░███  ███░░███  ███░░███ ░░░░░███ ░░███ ░░███  ███░░███░░███ ░███ ░░███░░███   ░░███░░███░░███ ░███ 
+ ░███░░█    ░███ ░███ ░███ ░███ ░███████   ███████  ░███  ░███ ░███ ░███ ░███ ░███  ░███ ░░░     ░███ ░███ ░███ ░███ 
+ ░███ ░   █ ░███ ░███ ░███ ░███ ░███░░░   ███░░███  ░░███ ███  ░███ ░███ ░███ ░███  ░███         ░███ ░███ ░███ ░███ 
+ ██████████ ████ █████░░████████░░██████ ░░████████  ░░█████   ░░██████  ░░████████ █████     ██ ░███████  ░░███████ 
+░░░░░░░░░░ ░░░░ ░░░░░  ░░░░░░░░  ░░░░░░   ░░░░░░░░    ░░░░░     ░░░░░░    ░░░░░░░░ ░░░░░     ░░  ░███░░░    ░░░░░███ 
+                                                                                                 ░███       ███ ░███ 
+                                                                                                 █████     ░░██████  
+                                                                                                ░░░░░       ░░░░░░   """)
