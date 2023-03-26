@@ -1,6 +1,8 @@
 import re
 import requests
 
+from validations import *
+
 def verifyLink(url:str):
     cleanUrlPattern = r"(https?://)(?:www.)?([\w.-]+)"
     validURL = re.match(cleanUrlPattern, url)
@@ -103,8 +105,38 @@ def loadAndDivide(threadCount:int):
     dir_jobsize = sizeofDir//threadCount
     subdom_jobsize = sizeofDom//threadCount
 
-    divideDirs = [dirs[i::dir_jobsize] for i in range(dir_jobsize)]
-    divideSubdoms = [subdomains[i::subdom_jobsize] for i in range(subdom_jobsize)]
+    print(f"Directories jobsize: {dir_jobsize}")
+    divideDirs = []
+    divideSubdoms = []
+    for i in range(threadCount):
+        if(i!=dir_jobsize):
+            #Compute starting and ending position for threds
+            start = i*threadCount
+            end = threadCount*dir_jobsize
+
+            dirAdd = dirs[start:end]
+            divideDirs.append(dirAdd)
+        else:
+            dirAdd = dirs[i:-1]
+            divideDirs.append(dirAdd)
+    
+    #Validation function
+    validateList(divideDirs)
+
+    for i in range(threadCount):
+        if(i!=subdom_jobsize):
+            #Compute starting and ending position for threds
+            start = i*threadCount
+            end = threadCount*dir_jobsize
+            
+            subdomAdd = subdomains[start:end]
+            divideSubdoms.append(subdomAdd)
+        else:
+            subdomAdd = [subdomains[i:-1]]
+            divideSubdoms.append(subdomAdd)
+
+    #Validation function
+    # validateList(divideSubdoms)
 
     return ((dirs,divideDirs),(subdomains,divideSubdoms))
 

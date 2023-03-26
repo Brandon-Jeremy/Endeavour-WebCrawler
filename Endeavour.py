@@ -22,7 +22,7 @@ def main():
     except KeyboardInterrupt:
         print("Keyboard Interrupt initiated")
 
-    printAscii()
+    # printAscii()
 
 if __name__== "__main__":
     main()
