@@ -1,5 +1,6 @@
 import threading
 from multiprocessing import cpu_count
+from helper import loadAndDivide
 
 def verifyThreads(threadCount: int):
     if threadCount > cpu_count():

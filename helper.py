@@ -19,59 +19,47 @@ def verifyLink(url:str):
         return None
     except requests.exceptions.RequestException as error:
         return None
-    
-def chooseFunction(argNumber: int, cleanUrl: str):
-    if (argNumber == 1):
-        findDirs(cleanUrl)
-        
-    elif(argNumber == 2):
-        findSubDomains(cleanUrl)
 
-    elif(argNumber == 3):
-        getFiles(cleanUrl)
-
-    else:
-        findDirs(cleanUrl)
-        findSubDomains(cleanUrl)
-        getFiles(cleanUrl)
-
-def findDirs(cleanUrl: str):
+def findDirs(cleanUrl: str, potential_dirs:list):
     group1 = cleanUrl.group(1)
     group2 = cleanUrl.group(2)
     link = group1+group2
-    print("Main link: "+link)
     num_valid = 0
-    with open('output_files/directories_output.txt', 'w') as directories_output:
-        with open('input_files/dirs_dictionary.txt','r') as potential_dirs:
-            for directory in potential_dirs:
-                directory = directory.rstrip()
-                fullURL = link+'/'+directory
-                r = requests.get(fullURL)
-                if(r.status_code >= 200 and r.status_code <300):
-                    directories_output.write(fullURL+"\n")
-                    num_valid+=1
-    print(f"Number of valid directories: {num_valid}")
+
+    foundDirs = []
+
+    for directory in potential_dirs:
+        directory = directory.rstrip()
+        fullURL = link+'/'+directory
+        r = requests.get(fullURL)
+        if(r.status_code >= 200 and r.status_code <300):
+            foundDirs.append(fullURL)
+            num_valid+=1
+    with open('output_files\dirs_output.txt','r') as out:
+        for link in foundDirs:
+            out.write(link+"\n")
 
 def findSubDomains(cleanUrl: str):
     http = cleanUrl.group(1)
     link = cleanUrl.group(2)
     success = 0
-    with open('output_files/subdomains_output.txt','w') as subdomains_output:
-        with open('input_files/subdomains_dictionary.txt','r') as domains:
-            for domain in domains:
-                domain = domain.rstrip()
-                fullURL = http+"www."+domain+"."+link
-                print(f"Link: {fullURL}")
-                try:
-                    r = requests.get(http+domain+"."+link)
-                    r.raise_for_status()
-                    if(r.status_code>=200 and r.status_code<300):
-                        subdomains_output.write(http+domain+"."+link+"\n")
-                        success+=1
-                    print(r.status_code)
-                except requests.exceptions.RequestException as error:
-                    pass
-    print(f"Number of valid subdomains: {success}")
+
+    foundDoms = []
+
+    for domain in domains:
+        domain = domain.rstrip()
+        try:
+            r = requests.get(http+domain+"."+link)
+            r.raise_for_status()
+            if(r.status_code>=200 and r.status_code<300):
+                Dom = http+domain+"."+link
+                foundDoms.append(Dom)
+                success+=1
+        except requests.exceptions.RequestException as error:
+            pass
+    with open('output_files\subdomain_output.txt','r') as out:
+        for link in foundDoms:
+            out.write(link+"\n")
     
 def getFiles(cleanUrl: str):
     http=cleanUrl.group(0)
@@ -120,7 +108,7 @@ def loadAndDivide(threadCount:int):
             divideDirs.append(dirAdd)
     
     #Validation function
-    # validateList(divideDirs)
+    validateList(divideDirs)
 
     for i in range(threadCount):
         if(i!=threadCount-1):
