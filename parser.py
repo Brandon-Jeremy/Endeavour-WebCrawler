@@ -9,6 +9,8 @@ def parseArguments():
     parser.add_argument("-o","--option",help="Select if you'd like to crawl directories (1), subdomains (2), "+
     "href links from source code (3) or all of the mentioned (4)",choices=[1,2,3,4],type=int, default=1)
 
+    parser.add_argument("-t","--thread",help="Number of threads to execute code on",type=int, default=4)
+    
     args = parser.parse_args()
 
     return args
