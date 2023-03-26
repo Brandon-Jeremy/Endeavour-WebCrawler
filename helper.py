@@ -1,5 +1,6 @@
 import re
 import requests
+import math
 
 from validations import *
 
@@ -97,42 +98,42 @@ def loadAndDivide(threadCount:int):
     sizeofDir = len(dirs)
     sizeofDom = len(subdomains)
 
-    print(f"The size of the directories list is: {sizeofDir}\n"+
-            f"The size of the subdomains list is: {sizeofDom}")
-
     #Calculate the size that each thread should compute from the text file
     #Divide number of lines of file by the number of threads
-    dir_jobsize = sizeofDir//threadCount
-    subdom_jobsize = sizeofDom//threadCount
+    dir_jobsize = math.floor(sizeofDir/threadCount)
+    subdom_jobsize = math.floor(sizeofDom/threadCount)
 
-    print(f"Directories jobsize: {dir_jobsize}")
     divideDirs = []
     divideSubdoms = []
     for i in range(threadCount):
-        if(i!=dir_jobsize):
+        if(i!=threadCount-1):
             #Compute starting and ending position for threds
-            start = i*threadCount
-            end = threadCount*dir_jobsize
+            start = i*dir_jobsize
+            end = start+dir_jobsize
 
             dirAdd = dirs[start:end]
             divideDirs.append(dirAdd)
         else:
-            dirAdd = dirs[i:-1]
+            start = i*dir_jobsize
+
+            dirAdd = dirs[start:]
             divideDirs.append(dirAdd)
     
     #Validation function
-    validateList(divideDirs)
+    # validateList(divideDirs)
 
     for i in range(threadCount):
-        if(i!=subdom_jobsize):
+        if(i!=threadCount-1):
             #Compute starting and ending position for threds
-            start = i*threadCount
-            end = threadCount*dir_jobsize
+            start = i*subdom_jobsize
+            end = start+subdom_jobsize
             
             subdomAdd = subdomains[start:end]
             divideSubdoms.append(subdomAdd)
         else:
-            subdomAdd = [subdomains[i:-1]]
+            start = i*subdom_jobsize
+
+            subdomAdd = subdomains[start:]
             divideSubdoms.append(subdomAdd)
 
     #Validation function
