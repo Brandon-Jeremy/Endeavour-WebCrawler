@@ -2,22 +2,23 @@ import re
 import sys
 import threading
 import requests
-import tqdm
+from tqdm import tqdm
 import argparse
 from helper import *
 from parser import *
+from threadManager import *
 
 arguments = parseArguments()
 
 def main():
-    print(arguments.weblink)
     validLink = verifyLink(arguments.weblink)
+    validThreadCount = verifyThreads(arguments.thread)
     if (not validLink):
         print("Please enter a valid URL")
         exit(0)
-    print(validLink)
     try:
-        chooseFunction(arguments.option, validLink)
+        # chooseFunction(arguments.option, validLink)
+        loadAndDivide(validThreadCount)
     except KeyboardInterrupt:
         print("Keyboard Interrupt initiated")
 
