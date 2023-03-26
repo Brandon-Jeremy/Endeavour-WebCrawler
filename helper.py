@@ -1,6 +1,7 @@
 import re
 import requests
 import math
+from tqdm import tqdm
 
 from validations import *
 
@@ -20,7 +21,7 @@ def verifyLink(url:str):
     except requests.exceptions.RequestException as error:
         return None
 
-def findDirs(cleanUrl: str, potential_dirs:list):
+def findDirs(cleanUrl: str, potential_dirs:list,progressbar):
     group1 = cleanUrl.group(1)
     group2 = cleanUrl.group(2)
     link = group1+group2
@@ -32,6 +33,7 @@ def findDirs(cleanUrl: str, potential_dirs:list):
         directory = directory.rstrip()
         fullURL = link+'/'+directory
         r = requests.get(fullURL)
+        progressbar.update(1)
         if(r.status_code >= 200 and r.status_code <300):
             foundDirs.append(fullURL)
             num_valid+=1
@@ -108,7 +110,7 @@ def loadAndDivide(threadCount:int):
             divideDirs.append(dirAdd)
     
     #Validation function
-    validateList(divideDirs)
+    # validateList(divideDirs)
 
     for i in range(threadCount):
         if(i!=threadCount-1):

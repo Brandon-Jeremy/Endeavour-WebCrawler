@@ -19,8 +19,9 @@ def runFunction(argNumber: int, cleanUrl: str, dirs, subdomains, validThreadCoun
     joins on the threads created. using with allows us to use it as a context manager
     to manage the creation and destruction of the pool.
     """
-    with tqdm(desc="Directories Search",total=len(dirs[0]),colour="magenta",unit="Directories") as progressbar, \
-        ThreadPoolExecutor(max_workers = validThreadCount) as executor:
+
+    progressbar = tqdm(range(len(dirs[0])),desc="Directories Search",colour="magenta",total=len(dirs[1][1]))
+    findDirs(cleanUrl, dirs[1][0],progressbar)
 
 def main():
     validLink = verifyLink(arguments.weblink)
