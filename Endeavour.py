@@ -20,8 +20,14 @@ def runFunction(argNumber: int, cleanUrl: str, dirs, subdomains, validThreadCoun
     to manage the creation and destruction of the pool.
     """
 
-    progressbar = tqdm(range(len(dirs[0])),desc="Directories Search",colour="magenta",total=len(dirs[1][1]))
-    findDirs(cleanUrl, dirs[1][0],progressbar)
+    progressbar = tqdm(range(len(dirs[0])),desc="Directories Search",colour="magenta",total=len(dirs[0]))
+    with ThreadPoolExecutor(max_workers = validThreadCount) as executor:
+        for divided_dir in dirs[1]:
+            executor.submit(findDirs,cleanUrl,divided_dir,progressbar)
+    progressbar = tqdm(range(len(subdomains[0])),desc="Subdomains Search",colour="magenta",total=len(subdomains[0]))
+    with ThreadPoolExecutor(max_workers = validThreadCount) as executor:
+        for divided_subdoms in subdomains[1]:
+            executor.submit(findSubDomains,cleanUrl,divided_subdoms,progressbar)
 
 def main():
     validLink = verifyLink(arguments.weblink)

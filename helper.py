@@ -37,7 +37,7 @@ def findDirs(cleanUrl: str, potential_dirs:list,progressbar):
         if(r.status_code >= 200 and r.status_code <300):
             foundDirs.append(fullURL)
             num_valid+=1
-    with open('output_files\dirs_output.txt','r') as out:
+    with open('output_files\dirs_output.txt','w') as out:
         for link in foundDirs:
             out.write(link+"\n")
 
