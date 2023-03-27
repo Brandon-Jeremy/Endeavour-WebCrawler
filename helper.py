@@ -37,19 +37,20 @@ def findDirs(cleanUrl: str, potential_dirs:list,progressbar):
         if(r.status_code >= 200 and r.status_code <300):
             foundDirs.append(fullURL)
             num_valid+=1
-    with open('output_files\dirs_output.txt','w') as out:
+    with open('output_files\dirs_output.txt','a') as out:
         for link in foundDirs:
             out.write(link+"\n")
 
-def findSubDomains(cleanUrl: str):
+def findSubDomains(cleanUrl: str, potential_subdoms:list,progressbar):
     http = cleanUrl.group(1)
     link = cleanUrl.group(2)
     success = 0
 
     foundDoms = []
 
-    for domain in domains:
+    for domain in potential_subdoms:
         domain = domain.rstrip()
+        progressbar.update(1)
         try:
             r = requests.get(http+domain+"."+link)
             r.raise_for_status()
@@ -59,7 +60,7 @@ def findSubDomains(cleanUrl: str):
                 success+=1
         except requests.exceptions.RequestException as error:
             pass
-    with open('output_files\subdomain_output.txt','r') as out:
+    with open('output_files\subdomain_output.txt','a') as out:
         for link in foundDoms:
             out.write(link+"\n")
     

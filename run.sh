@@ -1,1 +1,1 @@
-python Endeavour.py https://ctflearn.com -t 4
+python ./Endeavour.py https://ctflearn.com -t 12
