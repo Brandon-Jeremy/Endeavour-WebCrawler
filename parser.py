@@ -10,6 +10,8 @@ def parseArguments():
     "href links from source code (3) or all of the mentioned (4)",choices=[1,2,3,4],type=int, default=1)
 
     parser.add_argument("-t","--thread",help="Number of threads to execute code on",type=int, default=4)
+
+    parser.add_argument("-v","--verbose",help="Choose if verbose mode should be enabled",choices=[True,False], type=bool, default=False)
     
     args = parser.parse_args()
 
