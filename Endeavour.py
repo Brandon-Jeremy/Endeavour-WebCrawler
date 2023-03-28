@@ -19,15 +19,34 @@ def runFunction(argNumber: int, cleanUrl: str, dirs, subdomains, validThreadCoun
     joins on the threads created. using with allows us to use it as a context manager
     to manage the creation and destruction of the pool.
     """
-
-    # progressbar = tqdm(range(len(dirs[0])),desc="Directories Search",colour="magenta",total=len(dirs[0]),unit=" dirs")
-    # with ThreadPoolExecutor(max_workers = validThreadCount) as executor:
-    #     for divided_dir in dirs[1]:
-    #         executor.submit(findDirs,cleanUrl,divided_dir,progressbar)
-    pbar = tqdm(range(len(subdomains[0])),desc="Subdomains Search",colour="magenta",total=len(subdomains[0]),unit=" subdoms")
-    with ThreadPoolExecutor(max_workers = validThreadCount) as execute:
-        for divided_subdoms in subdomains[1]:
-            execute.submit(findSubDomains,cleanUrl,divided_subdoms,pbar)
+    """
+    Select if you'd like to crawl directories (1), subdomains (2), "+
+    "href links from source code (3) or all of the mentioned (4)
+    """
+    if (argNumber==1):
+        progressbar = tqdm(range(len(dirs[0])),desc="Directories Search",colour="magenta",total=len(dirs[0]),unit=" dirs")
+        with ThreadPoolExecutor(max_workers = validThreadCount) as executor:
+            for divided_dir in dirs[1]:
+                executor.submit(findDirs,cleanUrl,divided_dir,progressbar)
+    elif (argNumber==2):
+        pbar = tqdm(range(len(subdomains[0])),desc="Subdomains Search",colour="magenta",total=len(subdomains[0]),unit=" subdoms")
+        with ThreadPoolExecutor(max_workers = validThreadCount) as execute:
+            for divided_subdoms in subdomains[1]:
+                execute.submit(findSubDomains,cleanUrl,divided_subdoms,pbar)
+    elif (argNumber==3):
+        getFiles(cleanUrl)
+    elif (argNumber==4):
+        progressbar = tqdm(range(len(dirs[0])),desc="Directories Search",colour="magenta",total=len(dirs[0]),unit=" dirs")
+        with ThreadPoolExecutor(max_workers = validThreadCount) as executor:
+            for divided_dir in dirs[1]:
+                executor.submit(findDirs,cleanUrl,divided_dir,progressbar)
+        pbar = tqdm(range(len(subdomains[0])),desc="Subdomains Search",colour="magenta",total=len(subdomains[0]),unit=" subdoms")
+        with ThreadPoolExecutor(max_workers = validThreadCount) as execute:
+            for divided_subdoms in subdomains[1]:
+                execute.submit(findSubDomains,cleanUrl,divided_subdoms,pbar)
+    else:
+        print("Invalid Argument")
+        exit(0)
 
 def main():
     validLink = verifyLink(arguments.weblink)
@@ -52,7 +71,7 @@ def main():
     except KeyboardInterrupt:
         print("Keyboard Interrupt initiated")
 
-    # printAscii()
+    printAscii()
 
 if __name__== "__main__":
     main()
